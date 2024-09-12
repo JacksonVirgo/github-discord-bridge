@@ -13,14 +13,14 @@ type Issue struct {
 }
 
 func GetIssues() ([]string, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", GH_Context.author, GH_Context.repo)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", GithubContext.author, GithubContext.repo)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Printf("Error creating request: %s", err)
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", "token "+GH_Context.token)
+	req.Header.Set("Authorization", "token "+GithubContext.token)
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

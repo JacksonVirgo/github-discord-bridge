@@ -29,8 +29,8 @@ type CreateIssueResponse struct {
 }
 
 func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
-	newIssue.Owner = GH_Context.author
-	newIssue.Repo = GH_Context.repo
+	newIssue.Owner = GithubContext.author
+	newIssue.Repo = GithubContext.repo
 	newIssue.Headers.XGitHubApiVersion = "2022-11-28"
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", newIssue.Owner, newIssue.Repo)
@@ -46,7 +46,7 @@ func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
 		return CreateIssueResponse{}, err
 	}
 
-	req.Header.Set("Authorization", "token "+GH_Context.token)
+	req.Header.Set("Authorization", "token "+GithubContext.token)
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

@@ -10,7 +10,7 @@ import (
 )
 
 func CreateIssueComment(issueNumber int, comment string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/comments", GH_Context.author, GH_Context.repo, issueNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/comments", GithubContext.author, GithubContext.repo, issueNumber)
 	reqBody, err := json.Marshal(map[string]string{
 		"body": comment,
 	})
@@ -25,7 +25,7 @@ func CreateIssueComment(issueNumber int, comment string) error {
 		return err
 	}
 
-	req.Header.Set("Authorization", "token "+GH_Context.token)
+	req.Header.Set("Authorization", "token "+GithubContext.token)
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

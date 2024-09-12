@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-type GithubContext struct {
+type GithubContextStructure struct {
 	token  string
 	repo   string
 	author string
 }
 
-var GH_Context = &GithubContext{}
+var GithubContext = &GithubContextStructure{}
 
 func LoadGithubContext() error {
 	githubToken := os.Getenv("GITHUB_TOKEN")
@@ -22,7 +22,7 @@ func LoadGithubContext() error {
 		return errors.New("missing environment variables")
 	}
 
-	*GH_Context = GithubContext{
+	*GithubContext = GithubContextStructure{
 		token:  githubToken,
 		repo:   repo,
 		author: author,
@@ -32,9 +32,9 @@ func LoadGithubContext() error {
 }
 
 func GetRepo() string {
-	return GH_Context.repo
+	return GithubContext.repo
 }
 
 func GetAuthor() string {
-	return GH_Context.author
+	return GithubContext.author
 }
