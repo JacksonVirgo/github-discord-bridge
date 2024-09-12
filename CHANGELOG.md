@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Messages in linked threads create a github issue comment
+- Created threads in the linked channel creates a github issue
 - Basic docker build
 - Basic Go project
 - This repository
