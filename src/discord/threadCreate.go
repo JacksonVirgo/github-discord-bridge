@@ -31,7 +31,7 @@ func ThreadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			}
 		}
 
-		var header = fmt.Sprintf("> Posted by **@%s**\n\n", oldestMessage.Author.Username)
+		var header = fmt.Sprintf("> Posted by **@%s**\n> <sub>%s</sub>\n\n", oldestMessage.Author.Username, oldestMessage.ID)
 		var content = fmt.Sprintf("%s%s", header, oldestMessage.Content)
 
 		var issue, create_err = issues.CreateIssue(issues.CreateIssueRequest{
