@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 	"github.com/JacksonVirgo/github-discord-bridge/src/utils"
 	"github.com/bwmarrin/discordgo"
 )
@@ -97,13 +98,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var header = fmt.Sprintf("> Posted by **@%s**\n\n", m.Author.Username)
 	var content = fmt.Sprintf("%s%s", header, m.Content)
 
-	err = CreateIssueComment(threadNumber, content)
+	err = github.CreateIssueComment(threadNumber, content)
 	if err != nil {
 		return
 	}
 
 	if m.Content == "!get-issues" {
-		issues, err := GetIssues()
+		issues, err := github.GetIssues()
 		if err != nil {
 			s.ChannelMessageSend(m.ChannelID, err.Error())
 			return
@@ -169,15 +170,15 @@ func createIssueForThread(s *discordgo.Session, t *discordgo.ThreadCreate) {
 	var header = fmt.Sprintf("> Posted by **@%s**\n\n", oldestMessage.Author.Username)
 	var content = fmt.Sprintf("%s%s", header, oldestMessage.Content)
 
-	var issue, create_err = CreateIssue(CreateIssueRequest{
+	var issue, create_err = github.CreateIssue(github.CreateIssueRequest{
 		Title:  t.Name,
 		Body:   content,
 		Labels: []string{},
-		Headers: Headers{
+		Headers: github.Headers{
 			XGitHubApiVersion: "2022-11-28",
 		},
-		Owner: githubContext.author,
-		Repo:  githubContext.repo,
+		Owner: github.GetAuthor(),
+		Repo:  github.GetRepo(),
 	})
 
 	if create_err != nil {
