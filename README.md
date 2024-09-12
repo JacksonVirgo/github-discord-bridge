@@ -2,6 +2,8 @@
 
 This discord bot serves as a bridge between Discord forum channels and a Github repository's issues. Enabling more effective issue management with teams using both platforms.
 
+View the changelog [here](CHANGELOG.md)
+
 ## Features
 
 - Creating discord forum threads automatically creates a Github Issue
