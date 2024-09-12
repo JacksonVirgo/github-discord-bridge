@@ -10,16 +10,18 @@ import (
 	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 )
 
+// Label represents a GitHub issue label
 type Label struct {
 	Name string `json:"name"`
 }
 
-func GetIssueLabels() ([]string, error) {
+// GetIssueLabels fetches all labels from the GitHub repository
+func GetIssueLabels() ([]Label, error) {
 	token := github.GetToken()
 	repo := github.GetRepo()
 	author := github.GetAuthor()
 
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", author, repo)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/labels", author, repo)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Printf("Error creating request: %s", err)
@@ -35,7 +37,6 @@ func GetIssueLabels() ([]string, error) {
 		log.Printf("Error sending request: %s", err)
 		return nil, err
 	}
-
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
@@ -44,16 +45,11 @@ func GetIssueLabels() ([]string, error) {
 		return nil, err
 	}
 
-	var issues []Label
-	err = json.Unmarshal(body, &issues)
+	var labels []Label
+	err = json.Unmarshal(body, &labels)
 	if err != nil {
 		log.Printf("Error parsing JSON: %s", err)
 		return nil, err
-	}
-
-	var labels []string
-	for _, issue := range issues {
-		labels = append(labels, issue.Name)
 	}
 
 	return labels, nil
