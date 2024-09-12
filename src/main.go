@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/JacksonVirgo/github-discord-bridge/src/controllers"
 	"github.com/joho/godotenv"
@@ -19,6 +18,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	discordToken := os.Getenv("DISCORD_TOKEN")
-	controllers.StartDiscordBot(discordToken)
+	err = controllers.LoadDiscordContext()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	controllers.StartDiscordBot()
 }

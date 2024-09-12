@@ -1,15 +1,41 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/JacksonVirgo/github-discord-bridge/src/utils"
 	"github.com/bwmarrin/discordgo"
 )
 
-func StartDiscordBot(token string) (*discordgo.Session, error) {
+type DiscordContext struct {
+	token     string
+	channelId string
+}
+
+var discordContext = &DiscordContext{}
+
+func LoadDiscordContext() error {
+	discordToken := os.Getenv("DISCORD_TOKEN")
+	channelId := os.Getenv("DISCORD_CHANNEL_ID")
+
+	if discordToken == "" || channelId == "" {
+		return errors.New("missing environment variables")
+	}
+
+	*discordContext = DiscordContext{
+		token:     discordToken,
+		channelId: channelId,
+	}
+
+	return nil
+}
+
+func StartDiscordBot() (*discordgo.Session, error) {
+	token := discordContext.token
 	bot, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
@@ -45,6 +71,37 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	channel, err := s.State.Channel(m.ChannelID)
+	if err != nil {
+		channel, err = s.Channel(m.ChannelID)
+		if err != nil {
+			return
+		}
+	}
+
+	if channel.Type != discordgo.ChannelTypeGuildPublicThread && channel.Type != discordgo.ChannelTypeGuildPrivateThread && channel.Type != discordgo.ChannelTypeGuildNewsThread {
+		return
+	}
+
+	var channelId = channel.ParentID
+	if channelId != discordContext.channelId {
+		return
+	}
+
+	var threadTitle = channel.Name
+	var threadNumber, threadNumErr = utils.ExtractIssueNumberFromThreadTitle(threadTitle)
+	if threadNumErr != nil {
+		return
+	}
+
+	var header = fmt.Sprintf("> Posted by **@%s**\n\n", m.Author.Username)
+	var content = fmt.Sprintf("%s%s", header, m.Content)
+
+	err = CreateIssueComment(threadNumber, content)
+	if err != nil {
+		return
+	}
+
 	if m.Content == "!get-issues" {
 		issues, err := GetIssues()
 		if err != nil {
@@ -62,6 +119,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
+	if t.ID != discordContext.channelId {
+		return
+	}
 	if t.NewlyCreated {
 		message_id := t.LastMessageID
 		message, err := s.ChannelMessage(t.ID, message_id)
