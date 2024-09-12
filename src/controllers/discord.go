@@ -7,7 +7,12 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/octokit/go-sdk/pkg"
 )
+
+type Context struct {
+	github *pkg.Client
+}
 
 func StartDiscordBot(token string) (*discordgo.Session, error) {
 	bot, err := discordgo.New("Bot " + token)
