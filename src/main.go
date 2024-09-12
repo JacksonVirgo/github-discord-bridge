@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/JacksonVirgo/github-discord-bridge/src/controllers"
 	"github.com/joho/godotenv"
 )
 
@@ -16,5 +16,5 @@ func main() {
   	}
 
 	discordToken := os.Getenv("DISCORD_TOKEN")
-	fmt.Printf("Discord token: %s\n", discordToken)
+	controllers.StartDiscordBot(discordToken)
 }
