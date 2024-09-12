@@ -24,7 +24,6 @@ func LoadGithubContext() error {
 	repo := os.Getenv("GITHUB_REPO")
 	author := os.Getenv("GITHUB_AUTHOR")
 
-	fmt.Printf("Loaded Github Context: %v, %v, %v\n", githubToken, repo, author)
 	if githubToken == "" || repo == "" || author == "" {
 		return errors.New("missing environment variables")
 	}
