@@ -10,12 +10,10 @@ import (
 	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 )
 
-// Label represents a GitHub issue label
 type Label struct {
 	Name string `json:"name"`
 }
 
-// GetIssueLabels fetches all labels from the GitHub repository
 func GetIssueLabels() ([]Label, error) {
 	token := github.GetToken()
 	repo := github.GetRepo()
