@@ -63,7 +63,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 	if t.NewlyCreated {
-		s.ChannelMessageSend(t.ID, "Thread created!")
 		message_id := t.LastMessageID
 		message, err := s.ChannelMessage(t.ID, message_id)
 		if err != nil {
