@@ -95,7 +95,13 @@ type Headers struct {
 	XGitHubApiVersion string `json:"X-GitHub-Api-Version"`
 }
 
-func CreateIssue(newIssue CreateIssueRequest) error {
+type CreateIssueResponse struct {
+	Number  int    `json:"number"`
+	Url     string `json:"url"`
+	HtmlUrl string `json:"html_url"`
+}
+
+func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
 	newIssue.Owner = githubContext.author
 	newIssue.Repo = githubContext.repo
 	newIssue.Headers.XGitHubApiVersion = "2022-11-28"
@@ -104,13 +110,13 @@ func CreateIssue(newIssue CreateIssueRequest) error {
 	reqBody, err := json.Marshal(newIssue)
 	if err != nil {
 		log.Printf("Error marshalling request body: %s", err)
-		return err
+		return CreateIssueResponse{}, err
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
 	if err != nil {
 		log.Printf("Error creating request: %s", err)
-		return err
+		return CreateIssueResponse{}, err
 	}
 
 	req.Header.Set("Authorization", "token "+githubContext.token)
@@ -120,7 +126,7 @@ func CreateIssue(newIssue CreateIssueRequest) error {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("Error sending request: %s", err)
-		return err
+		return CreateIssueResponse{}, err
 	}
 
 	defer resp.Body.Close()
@@ -128,10 +134,15 @@ func CreateIssue(newIssue CreateIssueRequest) error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Printf("Error reading response body: %s", err)
-		return err
+		return CreateIssueResponse{}, err
 	}
 
-	fmt.Println(string(body))
+	var response CreateIssueResponse
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		log.Printf("Error parsing JSON: %s", err)
+		return CreateIssueResponse{}, err
+	}
 
-	return nil
+	return response, err
 }

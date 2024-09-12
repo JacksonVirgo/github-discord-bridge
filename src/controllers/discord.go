@@ -73,7 +73,7 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 
 		var content = message.Content
 
-		CreateIssue(CreateIssueRequest{
+		var issue, create_err = CreateIssue(CreateIssueRequest{
 			Title:  t.Name,
 			Body:   content,
 			Labels: []string{},
@@ -84,6 +84,22 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			Repo:  githubContext.repo,
 		})
 
-		s.ChannelMessageSend(t.ID, "Issue created!")
+		if create_err != nil {
+			s.ChannelMessageSend(t.ID, create_err.Error())
+			return
+		}
+
+		var threadRename = fmt.Sprintf("%d) %s", issue.Number, t.Name)
+		_, err = s.ChannelEdit(t.ID, &discordgo.ChannelEdit{
+			Name: threadRename,
+		})
+
+		if err != nil {
+			s.ChannelMessageSend(t.ID, fmt.Sprintf("Failed to rename thread: %s", err.Error()))
+			return
+		}
+
+		var response = fmt.Sprintf("Issue #%d created: %s", issue.Number, issue.HtmlUrl)
+		s.ChannelMessageSend(t.ID, response)
 	}
 }
