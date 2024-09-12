@@ -7,7 +7,6 @@ View the changelog [here](CHANGELOG.md)
 ## Features
 
 - Creating discord forum threads automatically creates a Github Issue
-  - Tags are currently not supported
 - Messages sent in linked threads will be sent as comments on the appropriate Github issue
 
 ## Plans
