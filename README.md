@@ -1,5 +1,23 @@
 # Github Discord Bridge
 
+This discord bot serves as a bridge between Discord forum channels and a Github repository's issues. Enabling more effective issue management with teams using both platforms.
+
+## Features
+
+- Creating discord forum threads automatically creates a Github Issue
+  - Tags are currently not supported
+- Messages sent in linked threads will be sent as comments on the appropriate Github issue
+
+## Plans
+
+- Github to Discord linking
+- Thread tags
+- User assignments
+- Allowing images (such as attachments, or even user icons for clarity)
+- Issue lock/unlocks
+- Issue opens/closes
+- Deleting issues
+
 ## Installation
 
 ### Prerequisites
@@ -27,9 +45,10 @@
 - DISCORD_TOKEN -> Discord developer bot page "Settings->bot->reset token"
 - DISCORD_CHANNEL_ID -> In the Discord server, create a forum channel and right-click (RMB) to copy the channel ID (developer settings must be turned on for this).
 - GITHUB_TOKEN
-  1. [New Fine-grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) or follow these steps: Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token.
-  2. In the "Repository access" section, select "Only select repositories" and choose the specific repositories you need access to.
-  3. In the "Permissions" section, click on "Repository permissions" and set "Issues" to "Read & Write".
-  4. Generate and copy the personal access token.
+  1. Preface: Make sure you're creating these on the account that will be posting on Github. Such as a new account used primarily (and obviously) as a bot account
+  2. [New Fine-grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) or follow these steps: Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token.
+  3. In the "Repository access" section, select "Only select repositories" and choose the specific repositories you need access to.
+  4. In the "Permissions" section, click on "Repository permissions" and set "Issues" to "Read & Write".
+  5. Generate and copy the personal access token.
 - GITHUB_USERNAME -> The user the repository is under
 - GITHUB_REPO -> The repository name (in its URL)
