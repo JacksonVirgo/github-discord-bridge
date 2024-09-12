@@ -19,6 +19,7 @@ func StartDiscordBot(token string) (*discordgo.Session, error) {
 	bot.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuilds | discordgo.IntentsMessageContent
 	bot.AddHandler(onReady)
 	bot.AddHandler(messageCreate)
+	bot.AddHandler(threadCreate)
 
 	err = bot.Open()
 	if err != nil {
@@ -46,5 +47,18 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	if m.Content == "!ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	}
+}
+
+func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
+	if t.NewlyCreated {
+		s.ChannelMessageSend(t.ID, "Thread created!")
+		message_id := t.LastMessageID
+		message, err := s.ChannelMessage(t.ID, message_id)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		s.ChannelMessageSend(t.ID, message.Content)	
 	}
 }
