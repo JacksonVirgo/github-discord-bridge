@@ -37,7 +37,7 @@ func StartDiscordBot(token string) (*discordgo.Session, error) {
 }
 
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
-    fmt.Printf("Logged in as: %v\n", s.State.User.Username)
+	fmt.Printf("Logged in as: %v\n", s.State.User.Username)
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -70,6 +70,6 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			fmt.Println(err)
 			return
 		}
-		s.ChannelMessageSend(t.ID, message.Content)	
+		s.ChannelMessageSend(t.ID, message.Content)
 	}
 }
