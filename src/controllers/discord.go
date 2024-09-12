@@ -45,8 +45,19 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if m.Content == "!ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	if m.Content == "!get-issues" {
+		issues, err := GetIssues()
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, err.Error())
+			return
+		}
+
+		var returnStr = ""
+		for _, issue := range issues {
+			returnStr = returnStr + "> " + issue + "\n"
+		}
+
+		s.ChannelMessageSend(m.ChannelID, returnStr)
 	}
 }
 

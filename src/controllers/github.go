@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -36,27 +38,48 @@ func LoadGithubContext() error {
 	return nil
 }
 
-func GetIssues() (string, error) {
+
+type Issue struct {
+	Title string `json:"title"`
+}
+
+func GetIssues() ([]string, error) {
     url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", githubContext.author, githubContext.repo)
-	req, err := http.NewRequest("GET", url, nil)
+    req, err := http.NewRequest("GET", url, nil)
     if err != nil {
-		return "", err
+        log.Printf("Error creating request: %s", err)
+        return nil, err
     }
 
-	req.Header.Set("Authorization", "token "+githubContext.token)
+    req.Header.Set("Authorization", "token "+githubContext.token)
     req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
-	client := &http.Client{}
+    client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
-		return "", err
+        log.Printf("Error sending request: %s", err)
+        return nil, err
     }
+
     defer resp.Body.Close()
 
     body, err := io.ReadAll(resp.Body)
     if err != nil {
-		return "", err
+        log.Printf("Error reading response body: %s", err)
+        return nil, err
     }
 
-	return string(body), nil
+    var issues []Issue
+    err = json.Unmarshal(body, &issues)
+    if err != nil {
+        log.Printf("Error parsing JSON: %s", err)
+        return nil, err
+    }
+
+    var titles []string
+    for _, issue := range issues {
+        titles = append(titles, issue.Title)
+    }
+
+    return titles, nil
 }
