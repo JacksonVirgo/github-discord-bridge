@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func ExtractIssueNumberFromThreadTitle(title string) (int, error) {
@@ -19,4 +21,8 @@ func ExtractIssueNumberFromThreadTitle(title string) (int, error) {
 	}
 
 	return x, nil
+}
+
+func CheckChannelIsThread(channel *discordgo.Channel) bool {
+	return channel.Type == discordgo.ChannelTypeGuildPublicThread || channel.Type == discordgo.ChannelTypeGuildPrivateThread || channel.Type == discordgo.ChannelTypeGuildNewsThread
 }

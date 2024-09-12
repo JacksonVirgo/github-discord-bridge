@@ -79,7 +79,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	if channel.Type != discordgo.ChannelTypeGuildPublicThread && channel.Type != discordgo.ChannelTypeGuildPrivateThread && channel.Type != discordgo.ChannelTypeGuildNewsThread {
+	if !utils.CheckChannelIsThread(channel) {
 		return
 	}
 
