@@ -71,7 +71,8 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			return
 		}
 
-		var content = message.Content
+		var header = fmt.Sprintf("> Posted by **@%s**\n\n", message.Author.Username)
+		var content = fmt.Sprintf("%s%s", header, message.Content)
 
 		var issue, create_err = CreateIssue(CreateIssueRequest{
 			Title:  t.Name,
