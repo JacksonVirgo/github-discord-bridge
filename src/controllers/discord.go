@@ -2,26 +2,14 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/octokit/go-sdk/pkg"
 )
 
-type Context struct {
-	github *pkg.Client
-}
-
-var context *Context
-
-func StartDiscordBot(token string, github *pkg.Client) (*discordgo.Session, error) {
-	context = &Context{
-		github: github,
-	}
-
+func StartDiscordBot(token string) (*discordgo.Session, error) {
 	bot, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
@@ -49,9 +37,6 @@ func StartDiscordBot(token string, github *pkg.Client) (*discordgo.Session, erro
 }
 
 func onReady(s *discordgo.Session, event *discordgo.Ready) {
-	if context == nil {
-		log.Fatal("Context is nil")
-	}
     fmt.Printf("Logged in as: %v\n", s.State.User.Username)
 }
 

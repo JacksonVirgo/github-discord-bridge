@@ -15,13 +15,11 @@ func main() {
     	log.Fatal("Error loading .env file")
   	}
 
-
-	githubToken := os.Getenv("GITHUB_TOKEN")
-	client, err := controllers.StartGithub(githubToken)
+	err = controllers.LoadGithubContext()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	discordToken := os.Getenv("DISCORD_TOKEN")
-	controllers.StartDiscordBot(discordToken, client)
+	controllers.StartDiscordBot(discordToken)
 }

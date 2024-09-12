@@ -1,17 +1,33 @@
 package controllers
 
 import (
+	"errors"
 	"os"
-
-	"github.com/octokit/go-sdk/pkg"
 )
 
-func StartGithub(token string) (*pkg.Client, error) {
-	client, err := pkg.NewApiClient(
-		pkg.WithTokenAuthentication(os.Getenv("GITHUB_TOKEN")),
-	)
-	if err != nil {
-		return nil, err
+
+type GithubContext struct {
+	token string
+	repo string
+	author string
+}
+
+var githubContext *GithubContext
+
+func LoadGithubContext() error {
+	githubToken := os.Getenv("GITHUB_TOKEN")
+	repo := os.Getenv("GITHUB_REPO")
+	author := os.Getenv("GITHUB_AUTHOR")
+
+	if githubToken == "" || repo == "" || author == "" {
+		return errors.New("missing environment variables")
 	}
-	return client, nil
+
+	*githubContext = GithubContext{
+		token: githubToken,
+		repo: repo,
+		author: author,
+	}
+
+	return nil
 }
