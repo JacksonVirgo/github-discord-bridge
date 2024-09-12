@@ -1,4 +1,4 @@
-package github
+package issues
 
 import (
 	"bytes"
@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 )
 
 type CreateIssueRequest struct {
@@ -29,8 +31,8 @@ type CreateIssueResponse struct {
 }
 
 func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
-	newIssue.Owner = GithubContext.author
-	newIssue.Repo = GithubContext.repo
+	newIssue.Owner = github.GetAuthor()
+	newIssue.Repo = github.GetRepo()
 	newIssue.Headers.XGitHubApiVersion = "2022-11-28"
 
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", newIssue.Owner, newIssue.Repo)
@@ -46,7 +48,7 @@ func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
 		return CreateIssueResponse{}, err
 	}
 
-	req.Header.Set("Authorization", "token "+GithubContext.token)
+	req.Header.Set("Authorization", "token "+github.GetToken())
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

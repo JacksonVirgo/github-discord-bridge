@@ -1,4 +1,4 @@
-package github
+package issues
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 )
 
 type Issue struct {
@@ -13,14 +15,14 @@ type Issue struct {
 }
 
 func GetIssues() ([]string, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", GithubContext.author, GithubContext.repo)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", github.GetAuthor(), github.GetRepo())
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Printf("Error creating request: %s", err)
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", "token "+GithubContext.token)
+	req.Header.Set("Authorization", "token "+github.GetToken())
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

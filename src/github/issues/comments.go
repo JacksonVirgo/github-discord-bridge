@@ -1,4 +1,4 @@
-package github
+package issues
 
 import (
 	"bytes"
@@ -7,10 +7,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 )
 
 func CreateIssueComment(issueNumber int, comment string) error {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/comments", GithubContext.author, GithubContext.repo, issueNumber)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d/comments", github.GetAuthor(), github.GetRepo(), issueNumber)
 	reqBody, err := json.Marshal(map[string]string{
 		"body": comment,
 	})
@@ -25,7 +27,7 @@ func CreateIssueComment(issueNumber int, comment string) error {
 		return err
 	}
 
-	req.Header.Set("Authorization", "token "+GithubContext.token)
+	req.Header.Set("Authorization", "token "+github.GetToken())
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	client := &http.Client{}

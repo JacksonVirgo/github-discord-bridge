@@ -38,3 +38,7 @@ func GetRepo() string {
 func GetAuthor() string {
 	return GithubContext.author
 }
+
+func GetToken() string {
+	return GithubContext.token
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JacksonVirgo/github-discord-bridge/src/github"
+	"github.com/JacksonVirgo/github-discord-bridge/src/github/issues"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -33,11 +34,11 @@ func ThreadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 		var header = fmt.Sprintf("> Posted by **@%s**\n\n", oldestMessage.Author.Username)
 		var content = fmt.Sprintf("%s%s", header, oldestMessage.Content)
 
-		var issue, create_err = github.CreateIssue(github.CreateIssueRequest{
+		var issue, create_err = issues.CreateIssue(issues.CreateIssueRequest{
 			Title:  t.Name,
 			Body:   content,
 			Labels: []string{},
-			Headers: github.Headers{
+			Headers: issues.Headers{
 				XGitHubApiVersion: "2022-11-28",
 			},
 			Owner: github.GetAuthor(),

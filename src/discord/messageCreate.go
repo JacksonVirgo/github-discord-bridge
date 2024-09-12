@@ -3,7 +3,7 @@ package discord
 import (
 	"fmt"
 
-	"github.com/JacksonVirgo/github-discord-bridge/src/github"
+	"github.com/JacksonVirgo/github-discord-bridge/src/github/issues"
 	"github.com/JacksonVirgo/github-discord-bridge/src/utils"
 	"github.com/bwmarrin/discordgo"
 )
@@ -39,13 +39,13 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	var header = fmt.Sprintf("> Posted by **@%s**\n\n", m.Author.Username)
 	var content = fmt.Sprintf("%s%s", header, m.Content)
 
-	err = github.CreateIssueComment(threadNumber, content)
+	err = issues.CreateIssueComment(threadNumber, content)
 	if err != nil {
 		return
 	}
 
 	if m.Content == "!get-issues" {
-		issues, err := github.GetIssues()
+		issues, err := issues.GetIssues()
 		if err != nil {
 			s.ChannelMessageSend(m.ChannelID, err.Error())
 			return
