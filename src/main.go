@@ -17,11 +17,11 @@ func main() {
 
 
 	githubToken := os.Getenv("GITHUB_TOKEN")
-	// client, err := controllers.StartGithub(githubToken)
+	client, err := controllers.StartGithub(githubToken)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	discordToken := os.Getenv("DISCORD_TOKEN")
-	controllers.StartDiscordBot(discordToken)
+	controllers.StartDiscordBot(discordToken, client)
 }
