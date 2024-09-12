@@ -70,6 +70,20 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			fmt.Println(err)
 			return
 		}
-		s.ChannelMessageSend(t.ID, message.Content)
+
+		var content = message.Content
+
+		CreateIssue(CreateIssueRequest{
+			Title:  t.Name,
+			Body:   content,
+			Labels: []string{},
+			Headers: Headers{
+				XGitHubApiVersion: "2022-11-28",
+			},
+			Owner: githubContext.author,
+			Repo:  githubContext.repo,
+		})
+
+		s.ChannelMessageSend(t.ID, "Issue created!")
 	}
 }

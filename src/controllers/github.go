@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -79,4 +80,58 @@ func GetIssues() ([]string, error) {
 	}
 
 	return titles, nil
+}
+
+type CreateIssueRequest struct {
+	Owner   string   `json:"owner"`
+	Repo    string   `json:"repo"`
+	Title   string   `json:"title"`
+	Body    string   `json:"body"`
+	Labels  []string `json:"labels"`
+	Headers Headers  `json:"headers"`
+}
+
+type Headers struct {
+	XGitHubApiVersion string `json:"X-GitHub-Api-Version"`
+}
+
+func CreateIssue(newIssue CreateIssueRequest) error {
+	newIssue.Owner = githubContext.author
+	newIssue.Repo = githubContext.repo
+	newIssue.Headers.XGitHubApiVersion = "2022-11-28"
+
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues", newIssue.Owner, newIssue.Repo)
+	reqBody, err := json.Marshal(newIssue)
+	if err != nil {
+		log.Printf("Error marshalling request body: %s", err)
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		log.Printf("Error creating request: %s", err)
+		return err
+	}
+
+	req.Header.Set("Authorization", "token "+githubContext.token)
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error sending request: %s", err)
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %s", err)
+		return err
+	}
+
+	fmt.Println(string(body))
+
+	return nil
 }
