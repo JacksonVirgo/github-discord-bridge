@@ -100,7 +100,7 @@ func threadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			return
 		}
 
-		var response = fmt.Sprintf("Issue #%d created: %s", issue.Number, issue.HtmlUrl)
+		var response = fmt.Sprintf("[Issue #%d created](<%s>)", issue.Number, issue.HtmlUrl)
 		s.ChannelMessageSend(t.ID, response)
 	}
 }
