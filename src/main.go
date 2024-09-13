@@ -6,6 +6,7 @@ import (
 	"github.com/JacksonVirgo/github-discord-bridge/src/discord"
 	"github.com/JacksonVirgo/github-discord-bridge/src/github"
 	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
