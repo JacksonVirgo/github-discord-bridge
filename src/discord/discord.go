@@ -45,6 +45,7 @@ func StartDiscordBot() (*discordgo.Session, error) {
 	bot.AddHandler(OnReady)
 	bot.AddHandler(MessageCreate)
 	bot.AddHandler(ThreadCreate)
+	bot.AddHandler(ThreadUpdate)
 
 	err = bot.Open()
 	if err != nil {
