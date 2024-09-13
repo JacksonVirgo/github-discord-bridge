@@ -34,10 +34,29 @@ func ThreadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 		var header = fmt.Sprintf("> Posted by **@%s**\n> <sub>%s</sub>\n\n", oldestMessage.Author.Username, oldestMessage.ID)
 		var content = fmt.Sprintf("%s%s", header, oldestMessage.Content)
 
+		forumChannel, err := s.State.Channel(t.ParentID)
+		if err != nil {
+			forumChannel, err = s.Channel(t.ParentID)
+			if err != nil {
+				fmt.Printf("Forum Channel Err: %s", err)
+				return
+			}
+		}
+
+		var tagNames []string
+		for _, appliedTagID := range t.AppliedTags {
+			for _, availableTag := range forumChannel.AvailableTags {
+				if appliedTagID == availableTag.ID {
+					tagNames = append(tagNames, availableTag.Name)
+					break
+				}
+			}
+		}
+
 		var issue, create_err = issues.CreateIssue(issues.CreateIssueRequest{
 			Title:  t.Name,
 			Body:   content,
-			Labels: []string{},
+			Labels: tagNames,
 			Headers: issues.Headers{
 				XGitHubApiVersion: "2022-11-28",
 			},
