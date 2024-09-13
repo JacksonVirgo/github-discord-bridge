@@ -1,9 +1,7 @@
-FROM golang:1.23-alpine
-
+FROM golang:1.23
 WORKDIR /app
-COPY go.* ./
+COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o main src/main.go
-EXPOSE 8080
-CMD ["./main"]
+RUN go build -o ./bin/main src/main.go
+CMD ["./bin/main"]
