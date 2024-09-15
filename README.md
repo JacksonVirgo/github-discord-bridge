@@ -46,10 +46,10 @@ View the changelog [here](CHANGELOG.md)
 - DISCORD_TOKEN -> Discord developer bot page "Settings->bot->reset token"
 - DISCORD_CHANNEL_ID -> In the Discord server, create a forum channel and right-click (RMB) to copy the channel ID (developer settings must be turned on for this).
 - GITHUB_TOKEN
-  1. Preface: Make sure you're creating these on the account that will be posting on Github. Such as a new account used primarily (and obviously) as a bot account
+  1. If you're using another github account than the owner of the repository, this will not work and you will need the repo under an Organization and request access to create the token.
   2. [New Fine-grained Personal Access Token](https://github.com/settings/personal-access-tokens/new) or follow these steps: Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token.
   3. In the "Repository access" section, select "Only select repositories" and choose the specific repositories you need access to.
   4. In the "Permissions" section, click on "Repository permissions" and set "Issues" to "Read & Write".
   5. Generate and copy the personal access token.
-- GITHUB_USERNAME -> The user the repository is under
+- GITHUB_USERNAME -> The user/org the repository is under
 - GITHUB_REPO -> The repository name (in its URL)
