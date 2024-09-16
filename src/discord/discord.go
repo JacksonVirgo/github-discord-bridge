@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,6 +14,8 @@ type DiscordContext struct {
 }
 
 var discordContext = &DiscordContext{}
+
+var bot *discordgo.Session
 
 func LoadDiscordContext() error {
 	discordToken := os.Getenv("DISCORD_TOKEN")
@@ -33,12 +33,13 @@ func LoadDiscordContext() error {
 	return nil
 }
 
-func StartDiscordBot() (*discordgo.Session, error) {
+func StartDiscordBot() error {
 	token := discordContext.token
-	bot, err := discordgo.New("Bot " + token)
+	var err error
+	bot, err = discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
-		return nil, err
+		return err
 	}
 
 	bot.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuilds | discordgo.IntentsMessageContent
@@ -50,14 +51,14 @@ func StartDiscordBot() (*discordgo.Session, error) {
 	err = bot.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
-		return nil, err
+		return err
 	}
 
-	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-sc
+	return nil
+}
 
-	bot.Close()
-	return bot, nil
+func CloseDiscordBot() {
+	if bot != nil {
+		bot.Close()
+	}
 }
