@@ -41,45 +41,7 @@ func verifyGithubSignature(body []byte, signature string) bool {
 
 func InitApi() *http.Server {
 	router := gin.Default()
-
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, echo{Value: "pong"})
-	})
-
-	router.POST("/payload", func(c *gin.Context) {
-		body, err := io.ReadAll(c.Request.Body)
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to read body"})
-			return
-		}
-		c.Request.Body = io.NopCloser(bytes.NewReader(body))
-
-		signature := c.GetHeader("X-Hub-Signature-256")
-		if signature == "" {
-			c.JSON(400, gin.H{"error": "Missing signature header"})
-			return
-		}
-
-		if !verifyGithubSignature(body, signature) {
-			c.JSON(401, gin.H{"error": "Invalid signature"})
-			return
-		}
-
-		var jsonBody map[string]interface{}
-		if err := json.Unmarshal(body, &jsonBody); err != nil {
-			c.JSON(400, gin.H{"error": "Invalid JSON"})
-			return
-		}
-
-		jsonString, err := json.Marshal(jsonBody)
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to convert to JSON string"})
-			return
-		}
-
-		c.JSON(200, gin.H{"status": "success", "received": string(jsonString)})
-	})
-
+	router.POST("/payload", payloadEndpoint)
 	server := &http.Server{
 		Addr:         "0.0.0.0:8080",
 		Handler:      router,
@@ -89,4 +51,38 @@ func InitApi() *http.Server {
 	}
 
 	return server
+}
+
+func payloadEndpoint(c *gin.Context) {
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to read body"})
+		return
+	}
+	c.Request.Body = io.NopCloser(bytes.NewReader(body))
+
+	signature := c.GetHeader("X-Hub-Signature-256")
+	if signature == "" {
+		c.JSON(400, gin.H{"error": "Missing signature header"})
+		return
+	}
+
+	if !verifyGithubSignature(body, signature) {
+		c.JSON(401, gin.H{"error": "Invalid signature"})
+		return
+	}
+
+	var jsonBody map[string]interface{}
+	if err := json.Unmarshal(body, &jsonBody); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	jsonString, err := json.Marshal(jsonBody)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to convert to JSON string"})
+		return
+	}
+
+	c.JSON(200, gin.H{"status": "success", "received": string(jsonString)})
 }
