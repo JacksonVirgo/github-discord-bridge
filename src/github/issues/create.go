@@ -3,6 +3,7 @@ package issues
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -56,6 +57,12 @@ func CreateIssue(newIssue CreateIssueRequest) (CreateIssueResponse, error) {
 	if err != nil {
 		log.Printf("Error sending request: %s", err)
 		return CreateIssueResponse{}, err
+	}
+
+	if resp.StatusCode != 201 {
+		log.Printf("Error creating issue: %s", resp.Status)
+		log.Printf("Body: %s", string(reqBody))
+		return CreateIssueResponse{}, errors.New("error creating issue")
 	}
 
 	defer resp.Body.Close()

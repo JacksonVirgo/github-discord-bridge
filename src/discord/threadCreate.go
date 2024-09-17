@@ -53,16 +53,22 @@ func ThreadCreate(s *discordgo.Session, t *discordgo.ThreadCreate) {
 			}
 		}
 
-		var issue, create_err = issues.CreateIssue(issues.CreateIssueRequest{
-			Title:  t.Name,
-			Body:   content,
-			Labels: tagNames,
+		var issueData = issues.CreateIssueRequest{
+			Title: t.Name,
+			Body:  content,
 			Headers: issues.Headers{
 				XGitHubApiVersion: "2022-11-28",
 			},
-			Owner: github.GetAuthor(),
-			Repo:  github.GetRepo(),
-		})
+			Labels: []string{},
+			Owner:  github.GetAuthor(),
+			Repo:   github.GetRepo(),
+		}
+
+		if len(tagNames) > 0 {
+			issueData.Labels = tagNames
+		}
+
+		var issue, create_err = issues.CreateIssue(issueData)
 
 		if create_err != nil {
 			fmt.Printf("Issue Creation Err: %s", create_err.Error())
