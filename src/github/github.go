@@ -6,9 +6,10 @@ import (
 )
 
 type GithubContextStructure struct {
-	token  string
-	repo   string
-	author string
+	token         string
+	repo          string
+	author        string
+	webhookSecret string
 }
 
 var GithubContext = &GithubContextStructure{}
@@ -17,15 +18,17 @@ func LoadGithubContext() error {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	repo := os.Getenv("GITHUB_REPO")
 	author := os.Getenv("GITHUB_AUTHOR")
+	secret := os.Getenv("GITHUB_WEBHOOK_SECRET")
 
 	if githubToken == "" || repo == "" || author == "" {
 		return errors.New("missing environment variables")
 	}
 
 	*GithubContext = GithubContextStructure{
-		token:  githubToken,
-		repo:   repo,
-		author: author,
+		token:         githubToken,
+		repo:          repo,
+		author:        author,
+		webhookSecret: secret,
 	}
 
 	return nil
@@ -41,4 +44,8 @@ func GetAuthor() string {
 
 func GetToken() string {
 	return GithubContext.token
+}
+
+func GetWebhookSecret() string {
+	return GithubContext.webhookSecret
 }
