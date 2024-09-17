@@ -20,7 +20,14 @@ type echo struct {
 }
 
 type payload struct {
-	Action string `json:"action"`
+	Action  string `json:"action"`
+	Comment struct {
+		Body string `json:"body"`
+		Id   int    `json:"id"`
+		User struct {
+			Id int `json:"id"`
+		}
+	}
 }
 
 func verifyGithubSignature(body []byte, signature string) bool {
